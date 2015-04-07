@@ -1,0 +1,29 @@
+<head>
+  <title>octotask</title>
+</head>
+
+<body>
+<div class="navbar navbar-default" role="navigation">
+    <div class="navbar-header">
+        <a class="navbar-brand" href="#"><i class="fa fa-github-square"></i> Octotask</a>
+    </div>
+    <div class="navbar-collapse collapse">
+        <ul class="nav navbar-nav navbar-right">
+            {{> loginButtons}}
+        </ul>
+    </div>
+</div>
+
+  {{> hello}}
+  {{> profile}}
+</body>
+
+<template name="hello">
+  <a class="btn btn-default">Click Me</a>
+  <p>You've pressed the button {{counter}} times.</p>
+</template>
+
+
+<template name="profile">
+
+</template>
