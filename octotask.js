@@ -14,6 +14,12 @@ if (Meteor.isClient) {
       Session.set('counter', Session.get('counter') + 1);
     }
   });
+
+  Accounts.ui.config({
+    requestPermissions: {
+      github: ['user', 'repo', 'read:repo_hook']
+    }
+  });
 }
 
 if (Meteor.isServer) {
