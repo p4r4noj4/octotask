@@ -1,17 +1,41 @@
 if (Meteor.isClient) {
-  // counter starts at 0
-  Session.setDefault('counter', 0);
+  Session.setDefault('repositories', []);
+
+  getRepositories = function getRepositories(username, userToken) {
+    Meteor.call('getRepositories', username, userToken, function (error, result) {
+      Session.set('repositories', result);
+    });
+  };
 
   Template.home.helpers({
-    counter: function () {
-      return Session.get('counter');
+    repositories: function() {
+      if (Meteor.user() && Meteor.user().services.github.accessToken) {
+        getRepositories(Meteor.user().services.github.username, Meteor.user().services.github.accessToken);
+      }
+      return Session.get('repositories');
     }
   });
 
   Template.home.events({
-    'click a': function () {
-      // increment the counter when button is clicked
-      Session.set('counter', Session.get('counter') + 1);
+    'click #refresh-repos': function () {
+      getRepositories(Meteor.user().services.github.username, Meteor.user().services.github.accessToken);
+    }
+  });
+
+  Template.repository.helpers({
+    repoLabelType: function(isPrivate) {
+      if(isPrivate){
+        return "warning";
+      } else {
+        return "info";
+      }
+    },
+    repoLabel: function(isPrivate) {
+      if(isPrivate) {
+        return "private";
+      } else {
+        return "public";
+      }
     }
   });
 
@@ -23,6 +47,26 @@ if (Meteor.isClient) {
 }
 
 if (Meteor.isServer) {
+
+
+  var GitHubAPI = Meteor.npmRequire("github");
+  var github = new GitHubAPI( {
+    version: "3.0.0"
+  });
+
+  var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks']);
+
+  Meteor.methods({
+    'getRepositories': function getRepositories(username, userToken) {
+      github.authenticate({
+        type: "oauth",
+        token: userToken
+      });
+      var repos = wrappedGithubRepos.getFromUser({user: username, type: "owner"});
+      return repos;
+    }
+  });
+
   Meteor.startup(function () {
     // code to run on server at startup
   });

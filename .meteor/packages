@@ -13,3 +13,8 @@ twbs:bootstrap
 fortawesome:fontawesome
 iron:router
 http
+meteorhacks:npm
+
+
+npm-container
+meteorhacks:async
