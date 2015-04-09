@@ -1,14 +1,17 @@
 <template name="home">
-    <a class="btn btn-default" id="refresh-repos">Refresh repositories</a>
-    <div class="row">
-        <div class="panel panel-default col-sm-offset-2 col-sm-6">
-            <div class="panel-heading"> <h3>Repositories</h3> </div>
-            <div class="list-group">
-                {{#each repositories}}
-                    {{> repository}}
-                {{else}}
-                    <a class="list-group-item disabled">No repositories loaded yet</a>
-                {{/each}}
+    <div class="container">
+        <div class="row">
+            <div class="panel panel-success col-sm-offset-2 col-sm-6" style="padding-left:0; padding-right:0">
+                <div class="panel-heading">
+                    <h3>Repositories <a class="btn btn-success btn-sm pull-right" id="refresh-repos"><i class="fa fa-refresh fa-lg"></i></a> </h3>
+                </div>
+                <div class="list-group">
+                    {{#each repositories}}
+                        {{> repository}}
+                    {{else}}
+                        <a class="list-group-item disabled">No repositories loaded</a>
+                    {{/each}}
+                </div>
             </div>
         </div>
     </div>
@@ -18,7 +21,7 @@
 <template name="repository">
     <a class="list-group-item">
         <h5 class="list-group-item-heading">{{name}}
-            <span class="label label-{{repoLabelType private}} pull-right">{{#if private}}private{{else}}public{{/if}}</span>
+            <span class="label label-{{#if private}}warning{{else}}info{{/if}} pull-right">{{#if private}}private{{else}}public{{/if}}</span>
         </h5>
         <p class="list-group-item-text">{{description}}</p>
     </a>

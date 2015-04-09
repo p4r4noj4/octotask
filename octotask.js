@@ -23,20 +23,6 @@ if (Meteor.isClient) {
   });
 
   Template.repository.helpers({
-    repoLabelType: function(isPrivate) {
-      if(isPrivate){
-        return "warning";
-      } else {
-        return "info";
-      }
-    },
-    repoLabel: function(isPrivate) {
-      if(isPrivate) {
-        return "private";
-      } else {
-        return "public";
-      }
-    }
   });
 
   Accounts.ui.config({
@@ -54,7 +40,7 @@ if (Meteor.isServer) {
     version: "3.0.0"
   });
 
-  var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks']);
+  var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll']);
 
   Meteor.methods({
     'getRepositories': function getRepositories(username, userToken) {
@@ -62,7 +48,7 @@ if (Meteor.isServer) {
         type: "oauth",
         token: userToken
       });
-      var repos = wrappedGithubRepos.getFromUser({user: username, type: "owner"});
+      var repos = wrappedGithubRepos.getAll({user: username, type: "owner"});
       return repos;
     }
   });
