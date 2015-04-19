@@ -1,8 +1,8 @@
 if (Meteor.isClient) {
   Session.setDefault('repositories', []);
 
-  getRepositories = function getRepositories(username, userToken) {
-    Meteor.call('getRepositories', username, userToken, function (error, result) {
+  getRepositories = function getRepositories() {
+    Meteor.call('getRepositories', function (error, result) {
       Session.set('repositories', result);
     });
   };
@@ -10,7 +10,7 @@ if (Meteor.isClient) {
   Template.home.helpers({
     repositories: function() {
       if (Meteor.user() && Meteor.user().services.github.accessToken) {
-        getRepositories(Meteor.user().services.github.username, Meteor.user().services.github.accessToken);
+        getRepositories();
       }
       return Session.get('repositories');
     }
@@ -18,11 +18,12 @@ if (Meteor.isClient) {
 
   Template.home.events({
     'click #refresh-repos': function () {
-      getRepositories(Meteor.user().services.github.username, Meteor.user().services.github.accessToken);
+      getRepositories();
     }
   });
 
-  Template.repository.helpers({
+  Template.Repository.helpers({
+    
   });
 
   Accounts.ui.config({
@@ -41,15 +42,28 @@ if (Meteor.isServer) {
   });
 
   var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll']);
+  
+  var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments']);
+
+  var authenticateUser = function() {
+    github.authenticate({
+        type: "oauth",
+        token: Meteor.user().services.github.accessToken
+    });
+  };
+  
+  var getGitHubUsername = function() {
+    return Meteor.user().services.github.username;
+  };
 
   Meteor.methods({
-    'getRepositories': function getRepositories(username, userToken) {
-      github.authenticate({
-        type: "oauth",
-        token: userToken
-      });
-      var repos = wrappedGithubRepos.getAll({user: username, type: "owner"});
+    'getRepositories': function getRepositories() {
+      authenticateUser();
+      var repos = wrappedGithubRepos.getAll({user: getGitHubUsername(), type: "all"});
       return repos;
+    },
+    'getRepoIssues': function getRepoIssues(repo) {
+      
     }
   });
 

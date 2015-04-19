@@ -7,7 +7,7 @@
                 </div>
                 <div class="list-group">
                     {{#each repositories}}
-                        {{> repository}}
+                        {{> RepositoryItem}}
                     {{else}}
                         <a class="list-group-item disabled">No repositories loaded</a>
                     {{/each}}
@@ -18,8 +18,8 @@
 </template>
 
 
-<template name="repository">
-    <a class="list-group-item">
+<template name="RepositoryItem">
+    <a class="list-group-item" href="repositories/{{full_name}}">
         <h5 class="list-group-item-heading">{{name}}
             <span class="label label-{{#if private}}warning{{else}}info{{/if}} pull-right">{{#if private}}private{{else}}public{{/if}}</span>
         </h5>
