@@ -1,22 +1,26 @@
 <template name="Repository">
     <div class="page-header"> <h1><a href="https://www.github.com/{{username}}/{{reponame}}">{{reponame}}<small>@{{username}}</small></a></h1></div>
-    {{#if issues.length}}
-        <div class="list-group">
-            {{#each issues}}
-                {{> IssueItem}}
-            {{/each}}
+    <div class="row">
+        <div class="col-md-offset-1 col-md-10">
+            {{#if issues.length}}
+                <div class="list-group">
+                    {{#each issues}}
+                        {{> IssueItem}}
+                    {{/each}}
+                </div>
+            {{else}}
+                <div class="jumbotron">
+                    <h2>No issues yet!</h2>
+                    <p>Start by creating an issue</p>
+                </div>
+            {{/if}}
         </div>
-    {{else}}
-        <div class="jumbotron">
-            <h2>No issues yet!</h2>
-            <p>Start by creating an issue</p>
-        </div>
-    {{/if}}
+    </div>
 </template>
 
 <template name="IssueItem">
     <a class="list-group-item">
-        <h5 class="list-group-item-heading">{{title}}</h5>
-        <p class="list-group-item-text">{{body}}</p>
+        <h4 class="list-group-item-heading">{{title}}</h4>
+        <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
     </a>
 </template>

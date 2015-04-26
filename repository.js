@@ -12,5 +12,14 @@ if( Meteor.isClient ) {
   });
   
   
+  Template.IssueItem.created = function() {
+    //   this.renderedMarkdown = new ReactiveVar;
+    //   this.renderedMarkdown.set(Template.currentData().body);
+  }
+  
+  Template.IssueItem.helpers({
+  })
+  
+  
   
 }

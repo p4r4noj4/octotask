@@ -1,1 +1,6 @@
 /* CSS declarations go here */
+
+img.emoji {
+    width: 20px;
+    height: 20px;
+}

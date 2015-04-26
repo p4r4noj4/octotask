@@ -7,6 +7,14 @@ if (Meteor.isClient) {
     });
   };
 
+  // Template.registerHelper('renderMarkdown', function(text, username, reponame) {
+  //   var context = username + "/" + reponame;
+  //     Meteor.call('renderMarkdown', text, context, function(error, result) {
+  //         Template.instance().renderedMarkdown.set(result);
+  //     });
+  //     return Template.instance().renderedMarkdown.get();
+  // });
+
   Template.home.helpers({
     repositories: function() {
       if (Meteor.user() && Meteor.user().services.github.accessToken) {
@@ -45,7 +53,7 @@ if (Meteor.isServer) {
   
   var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments']);
   
-  var wrappedMarkdown = Async.wrap(github.markdown, ['render'])
+  // var wrappedMarkdown = Async.wrap(github.markdown, ['render'])
 
   var authenticateUser = function() {
     github.authenticate({
@@ -68,9 +76,6 @@ if (Meteor.isServer) {
       authenticateUser();
       var issues = wrappedIssues.repoIssues({user: username, repo:reponame, perPage: 100, state: "all"});
       return issues;
-    },
-    'renderMarkdown': function renderMarkdown(textToRender, renderingContext) {
-      var renderedText = wrappedMarkdown.render({text: textToRender, context: renderingContext, mode: "gfm"})
     }
   });
 
