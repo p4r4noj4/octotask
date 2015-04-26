@@ -22,9 +22,6 @@ if (Meteor.isClient) {
     }
   });
 
-  Template.Repository.helpers({
-    
-  });
 
   Accounts.ui.config({
     requestPermissions: {
@@ -32,6 +29,9 @@ if (Meteor.isClient) {
     }
   });
 }
+
+
+
 
 if (Meteor.isServer) {
 
@@ -44,6 +44,8 @@ if (Meteor.isServer) {
   var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll']);
   
   var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments']);
+  
+  var wrappedMarkdown = Async.wrap(github.markdown, ['render'])
 
   var authenticateUser = function() {
     github.authenticate({
@@ -59,11 +61,16 @@ if (Meteor.isServer) {
   Meteor.methods({
     'getRepositories': function getRepositories() {
       authenticateUser();
-      var repos = wrappedGithubRepos.getAll({user: getGitHubUsername(), type: "all"});
+      var repos = wrappedGithubRepos.getAll({user: getGitHubUsername(), type: "all", perPage: 100});
       return repos;
     },
-    'getRepoIssues': function getRepoIssues(repo) {
-      
+    'getRepoIssues': function getRepoIssues(reponame, username) {
+      authenticateUser();
+      var issues = wrappedIssues.repoIssues({user: username, repo:reponame, perPage: 100, state: "all"});
+      return issues;
+    },
+    'renderMarkdown': function renderMarkdown(textToRender, renderingContext) {
+      var renderedText = wrappedMarkdown.render({text: textToRender, context: renderingContext, mode: "gfm"})
     }
   });
 
