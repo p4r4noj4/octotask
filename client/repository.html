@@ -3,13 +3,13 @@
     <div class="row">
         <div class="col-md-offset-1 col-md-10">
             {{#if issues.length}}
-                <div class="list-group">
+                <div class="list-group allIssues">
                     {{#each issues}}
                         {{> IssueItem}}
                     {{/each}}
                 </div>
             {{else}}
-                <div class="jumbotron">
+                <div class="jumbotron text-center">
                     <h2>No issues yet!</h2>
                     <p>Start by creating an issue</p>
                 </div>
@@ -19,8 +19,44 @@
 </template>
 
 <template name="IssueItem">
-    <a class="list-group-item">
+    <div class="list-group-item">
         <h4 class="list-group-item-heading">{{title}}</h4>
         <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
-    </a>
+        <button type="button" class="btn btn-info btn-small btn-block" id="showComments">show comments</button>
+        <!--<a class="list-group-item" href="#" id="showComments">-->
+        <!--    <p class="list-group-item-text row text-center">-->
+        <!--        <small>show comments</small>-->
+                <!--<div class="row text-center"> <i class="fa fa-chevron-down"></i> </div>-->
+        <!--    </p>-->
+        <!--</a>-->
+        <div class="row">
+            <div class="panel-collapse collapse col-md-offset-1 col-md-10 " id="{{commentsId}}">
+                {{#if comments.length}}
+                    <ul class="media-list">
+                        {{#each comments}}
+                            {{> CommentItem}}
+                        {{/each}}
+                    </ul>
+                {{else}}
+                    <div class="panel-body text-center panel-info">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">No comments</h3>
+                        </div>
+                    </div>
+                {{/if}}
+            </div>
+        </div>
+    </div>
+</template>
+
+<template name="CommentItem">
+    <li class="media">
+        <div class="media-left">
+            <img class="media-object img-circle" style="max-height:100px" src="{{user.avatar_url}}">
+        </div>
+        <div class="media-body">
+            <h5 class="media-heading">{{user.login}}</h5>
+            {{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}
+        </div>
+    </li>
 </template>

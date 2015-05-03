@@ -12,12 +12,37 @@ if( Meteor.isClient ) {
   });
   
   
+  
+  
+  Template.IssueItem.events({
+      'click #showComments': function() {
+          $("#" + Template.instance().commentsId.get()).collapse('toggle');
+      }
+  });
+  
+  
   Template.IssueItem.created = function() {
-    //   this.renderedMarkdown = new ReactiveVar;
-    //   this.renderedMarkdown.set(Template.currentData().body);
+      this.commentsId = new ReactiveVar;
+      this.commentsId.set("commentsPanel" + Template.currentData().id.toString());
+      
+      this.comments = new ReactiveVar;
+      this.comments.set([]);
+      var commentsReactiveVar = Template.instance().comments;
+      $("#" + this.commentsId.get()).collapse({parent: ".allIssues"});
+      $("#" + this.commentsId.get()).on("show.bs.collapse", function() {
+          Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, Template.currentData().number, function(error, result) {
+              commentsReactiveVar.set(result);
+          });
+      });
   }
   
   Template.IssueItem.helpers({
+      commentsId: function() {
+          return Template.instance().commentsId.get();
+      },
+      comments: function() {
+          return Template.instance().comments.get();
+      }
   })
   
   

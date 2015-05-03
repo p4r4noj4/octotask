@@ -7,6 +7,7 @@ if (Meteor.isClient) {
     });
   };
 
+
   // Template.registerHelper('renderMarkdown', function(text, username, reponame) {
   //   var context = username + "/" + reponame;
   //     Meteor.call('renderMarkdown', text, context, function(error, result) {
@@ -76,6 +77,11 @@ if (Meteor.isServer) {
       authenticateUser();
       var issues = wrappedIssues.repoIssues({user: username, repo:reponame, perPage: 100, state: "all"});
       return issues;
+    },
+    'getIssueComments': function getIssueComments(reponame, username, issueNumber) {
+      authenticateUser();
+      var comments = wrappedIssues.getComments({user: username, repo:reponame, number:issueNumber, perPage: 100});
+      return comments;
     }
   });
 
