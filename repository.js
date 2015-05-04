@@ -17,6 +17,12 @@ if( Meteor.isClient ) {
   Template.IssueItem.events({
       'click #showComments': function() {
           $("#" + Template.instance().commentsId.get()).collapse('toggle');
+      },
+      'show.bs.collapse': function() {
+            var commentsReactiveVar = Template.instance().comments;
+            Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, Template.currentData().number, function(error, result) {
+                commentsReactiveVar.set(result);
+            });
       }
   });
   
@@ -27,13 +33,7 @@ if( Meteor.isClient ) {
       
       this.comments = new ReactiveVar;
       this.comments.set([]);
-      var commentsReactiveVar = Template.instance().comments;
       $("#" + this.commentsId.get()).collapse({parent: ".allIssues"});
-      $("#" + this.commentsId.get()).on("show.bs.collapse", function() {
-          Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, Template.currentData().number, function(error, result) {
-              commentsReactiveVar.set(result);
-          });
-      });
   }
   
   Template.IssueItem.helpers({
