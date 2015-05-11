@@ -47,12 +47,13 @@ if (Meteor.isServer) {
 
   var GitHubAPI = Meteor.npmRequire("github");
   var github = new GitHubAPI( {
-    version: "3.0.0"
+    version: "3.0.0",
+    debug: false
   });
 
   var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll']);
   
-  var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments']);
+  var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments', 'createComment']);
   
   // var wrappedMarkdown = Async.wrap(github.markdown, ['render'])
 
@@ -82,6 +83,11 @@ if (Meteor.isServer) {
       authenticateUser();
       var comments = wrappedIssues.getComments({user: username, repo:reponame, number:issueNumber, perPage: 100});
       return comments;
+    },
+    'createComment': function createComment(reponame, username, issueNumber, body) {
+      authenticateUser();
+      var newComment = wrappedIssues.createComment({user: username, repo:reponame, number:issueNumber, body: body});
+      return newComment;
     }
   });
 

@@ -23,12 +23,6 @@
         <h4 class="list-group-item-heading">{{title}}</h4>
         <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
         <button type="button" class="btn btn-info btn-small btn-block" id="showComments">show comments</button>
-        <!--<a class="list-group-item" href="#" id="showComments">-->
-        <!--    <p class="list-group-item-text row text-center">-->
-        <!--        <small>show comments</small>-->
-                <!--<div class="row text-center"> <i class="fa fa-chevron-down"></i> </div>-->
-        <!--    </p>-->
-        <!--</a>-->
         <div class="row">
             <div class="panel-collapse collapse col-md-offset-1 col-md-10 " id="{{commentsId}}">
                 {{#if comments.length}}
@@ -40,10 +34,11 @@
                 {{else}}
                     <div class="panel-body text-center panel-info">
                         <div class="panel-heading">
-                            <h3 class="panel-title">No comments</h3>
+                            <h3 class="panel-title">No comments yet</h3>
                         </div>
                     </div>
                 {{/if}}
+                {{>AddComment}}
             </div>
         </div>
     </div>
@@ -59,4 +54,15 @@
             {{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}
         </div>
     </li>
+</template>
+
+<template name="AddComment">
+  <form>
+    <div class="form-group">
+      <label class="sr-only" for="commentBody">Comment Contents</label>
+      <!--TODO(vucalur): markdown support-->
+      <textarea class="form-control" rows="3" id="commentBody" placeholder="Type here…"></textarea>
+    </div>
+    <button type="button" class="btn btn-success" id="addComment">Add Comment</button>
+  </form>
 </template>
