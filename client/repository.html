@@ -1,59 +1,65 @@
 <template name="Repository">
-    <div class="page-header"> <h1><a href="https://www.github.com/{{username}}/{{reponame}}">{{reponame}}<small>@{{username}}</small></a></h1></div>
-    <div class="row">
-        <div class="col-md-offset-1 col-md-10">
-            {{#if issues.length}}
-                <div class="list-group allIssues">
-                    {{#each issues}}
-                        {{> IssueItem}}
-                    {{/each}}
-                </div>
-            {{else}}
-                <div class="jumbotron text-center">
-                    <h2>No issues yet!</h2>
-                    <p>Start by creating an issue</p>
-                </div>
-            {{/if}}
+  <div class="page-header">
+    <h1><a href="https://www.github.com/{{username}}/{{reponame}}">{{reponame}}
+      <small>@{{username}}</small>
+    </a></h1>
+  </div>
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10">
+      {{#if issues.length}}
+        <div class="list-group allIssues">
+          {{#each issues}}
+            {{> IssueItem}}
+          {{/each}}
         </div>
+      {{else}}
+        <div class="jumbotron text-center">
+          <h2>No issues yet!</h2>
+
+          <p>Start by creating an issue</p>
+        </div>
+      {{/if}}
     </div>
+  </div>
 </template>
 
 <template name="IssueItem">
-    <div class="list-group-item">
-        <h4 class="list-group-item-heading">{{title}}</h4>
-        <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
-        <button type="button" class="btn btn-info btn-small btn-block" id="showComments">show comments</button>
-        <div class="row">
-            <div class="panel-collapse collapse col-md-offset-1 col-md-10 " id="{{commentsId}}">
-                {{#if comments.length}}
-                    <ul class="media-list">
-                        {{#each comments}}
-                            {{> CommentItem}}
-                        {{/each}}
-                    </ul>
-                {{else}}
-                    <div class="panel-body text-center panel-info">
-                        <div class="panel-heading">
-                            <h3 class="panel-title">No comments yet</h3>
-                        </div>
-                    </div>
-                {{/if}}
-                {{>AddComment}}
+  <div class="list-group-item">
+    <h4 class="list-group-item-heading">{{title}}</h4>
+
+    <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
+    <button type="button" class="btn btn-info btn-small btn-block" id="showComments">show comments</button>
+    <div class="row">
+      <div class="panel-collapse collapse col-md-offset-1 col-md-10 " id="{{commentsId}}">
+        {{#if comments.length}}
+          <ul class="media-list">
+            {{#each comments}}
+              {{> CommentItem}}
+            {{/each}}
+          </ul>
+        {{else}}
+          <div class="panel-body text-center panel-info">
+            <div class="panel-heading">
+              <h3 class="panel-title">No comments yet</h3>
             </div>
-        </div>
+          </div>
+        {{/if}}
+        {{>AddComment}}
+      </div>
     </div>
+  </div>
 </template>
 
 <template name="CommentItem">
-    <li class="media">
-        <div class="media-left">
-            <img class="media-object img-circle" style="max-height:70px" src="{{user.avatar_url}}">
-        </div>
-        <div class="media-body">
-            <h5 class="media-heading">{{user.login}}</h5>
-            {{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}
-        </div>
-    </li>
+  <li class="media">
+    <div class="media-left">
+      <img class="media-object img-circle" style="max-height:70px" src="{{user.avatar_url}}">
+    </div>
+    <div class="media-body">
+      <h5 class="media-heading">{{user.login}}</h5>
+      {{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}
+    </div>
+  </li>
 </template>
 
 <template name="AddComment">

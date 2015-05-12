@@ -1,32 +1,33 @@
 <template name="home">
-    <div class="container">
-        <div class="row">
-            <div class="panel panel-success col-sm-offset-2 col-sm-6" style="padding-left:0; padding-right:0">
-                <div class="panel-heading">
-                    <h3>Repositories <a class="btn btn-success btn-sm pull-right" id="refresh-repos"><i class="fa fa-refresh fa-lg"></i></a> </h3>
-                </div>
-                <div class="list-group">
-                    {{#each repositories}}
-                        {{> RepositoryItem}}
-                    {{else}}
-                        <a class="list-group-item disabled">No repositories loaded</a>
-                    {{/each}}
-                </div>
-            </div>
+  <div class="container">
+    <div class="row">
+      <div class="panel panel-success col-sm-offset-2 col-sm-6" style="padding-left:0; padding-right:0">
+        <div class="panel-heading">
+          <h3>Repositories <a class="btn btn-success btn-sm pull-right" id="refresh-repos"><i class="fa fa-refresh fa-lg"></i></a></h3>
         </div>
+        <div class="list-group">
+          {{#each repositories}}
+            {{> RepositoryItem}}
+          {{else}}
+            <a class="list-group-item disabled">No repositories loaded</a>
+          {{/each}}
+        </div>
+      </div>
     </div>
+  </div>
 </template>
 
 
 <template name="RepositoryItem">
-    <a class="list-group-item" href="repositories/{{full_name}}">
-        <h5 class="list-group-item-heading">{{name}}
-            <span class="label label-{{#if private}}warning{{else}}info{{/if}} pull-right">{{#if private}}private{{else}}public{{/if}}</span>
-        </h5>
-        <p class="list-group-item-text">{{description}}</p>
-    </a>
+  <a class="list-group-item" href="repositories/{{full_name}}">
+    <h5 class="list-group-item-heading">{{name}}
+      <span class="label label-{{#if private}}warning{{else}}info{{/if}} pull-right">{{#if private}}private{{else}}public{{/if}}</span>
+    </h5>
+
+    <p class="list-group-item-text">{{description}}</p>
+  </a>
 </template>
 
 <template name="profile">
-    <p>Your profile goes here</p>
+  <p>Your profile goes here</p>
 </template>
