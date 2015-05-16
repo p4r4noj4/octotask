@@ -11,8 +11,9 @@ if (Meteor.isClient) {
       }
    });
 
-
-//TODO(vucalur): Establish convention: Either `Template.instance()` or `this`
+   function getIssueId(issueTemplate) {
+      return issueTemplate.currentData().number;
+   }
 
    Template.IssueItem.events({
       'click #showComments': function () {
@@ -26,7 +27,7 @@ if (Meteor.isClient) {
          Meteor.call('createComment',
             Router.current().params.reponame,
             Router.current().params.username,
-            Template.currentData().number,
+            getIssueId(Template),
             body,
             function (error, newComment) {
                var updatedComments = commentsReactiveVar.get();
@@ -37,8 +38,7 @@ if (Meteor.isClient) {
       },
       'show.bs.collapse': function () {
          var commentsReactiveVar = Template.instance().comments;
-         var newIssueId = Template.currentData().number;
-         Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, newIssueId, function (error, result) {
+         Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, getIssueId(Template), function (error, result) {
             commentsReactiveVar.set(result);
          });
       }
@@ -47,6 +47,7 @@ if (Meteor.isClient) {
 
    Template.IssueItem.created = function () {
       this.commentsId = new ReactiveVar;
+      //TODO(p4r4noj4): currentData().number vs. currentData().id.toString(). Establish convention
       this.commentsId.set("commentsPanel" + Template.currentData().id.toString());
 
       this.comments = new ReactiveVar;
