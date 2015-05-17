@@ -1,6 +1,14 @@
 if (Meteor.isClient) {
 
    Session.setDefault('issues', []);
+   Session.setDefault('milestones', []);
+
+   Template.registerHelper('milestones', function () {
+      Meteor.call('getRepoMilestones', Router.current().params.reponame, Router.current().params.username, function (error, result) {
+         Session.set('milestones', result);
+      });
+      return Session.get('milestones');
+   });
 
    Template.Repository.helpers({
       issues: function () {
@@ -21,10 +29,12 @@ if (Meteor.isClient) {
          var titleInput = Template.instance().$("#title");
          var bodyInput = Template.instance().$("#issueCommentBody");
          var assigneeSelect = Template.instance().$("#assignee");
+         var milestoneSelect = Template.instance().$("#milestone");
 
          var title = titleInput.val();
          var body = bodyInput.val();
          var assignee = assigneeSelect.val();
+         var milestoneNumber = milestoneSelect.find(' option:selected #milestoneNumber').text();
 
          Meteor.call('createIssue',
             Router.current().params.reponame,
@@ -32,6 +42,7 @@ if (Meteor.isClient) {
             title,
             body,
             assignee,
+            milestoneNumber,
             function (error, newIssue) {
                var updatedIssues = Session.get('issues');
                updatedIssues.push(newIssue);
@@ -40,6 +51,7 @@ if (Meteor.isClient) {
                titleInput.val('');
                bodyInput.val('');
                assigneeSelect.prop('selectedIndex', 0);
+               milestoneSelect.prop('selectedIndex', 0);
             });
       }
    });

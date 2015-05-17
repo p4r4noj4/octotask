@@ -44,6 +44,16 @@
         <option>{{login}}</option>
       {{/each}}
     </select>
+    <!--TODO(vucalur): typeahead-->
+    <select class="form-group form-control" id="milestone">
+      <option value="default"></option>
+      {{#each milestones}}
+        <option>
+          <!--lame, but will be replaced with typeahead, which has custom templates -->
+          {{title}} (<p id="milestoneNumber">{{number}}</p>)
+        </option>
+      {{/each}}
+    </select>
 
     <!--TODO(p4r4noj4):event handling not finished, createDisabled flag not working. -->
     {{#if createDisabled}}
