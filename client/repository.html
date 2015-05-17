@@ -38,7 +38,7 @@
       <textarea class="form-control" rows="3" id="issueCommentBody" placeholder="Leave a comment"></textarea>
     </div>
     <!--TODO(vucalur): typeahead-->
-    <select class="form-group form-control">
+    <select class="form-group form-control" id="assignee">
       <option value="default" disabled="disabled">Choose assignee</option>
       {{#each collaborators}}
         <option>{{login}}</option>

@@ -20,11 +20,11 @@ if (Meteor.isClient) {
          //TODO(vucalur): DRY
          var titleInput = Template.instance().$("#title");
          var bodyInput = Template.instance().$("#issueCommentBody");
-         var assigneeInput = Template.instance().$("#assignee");
+         var assigneeSelect = Template.instance().$("#assignee");
 
          var title = titleInput.val();
          var body = bodyInput.val();
-         var assignee = assigneeInput.val();
+         var assignee = assigneeSelect.val();
 
          Meteor.call('createIssue',
             Router.current().params.reponame,
@@ -39,7 +39,7 @@ if (Meteor.isClient) {
 
                titleInput.val('');
                bodyInput.val('');
-               assigneeInput.val('');
+               assigneeSelect.prop('selectedIndex', 0);
             });
       }
    });
