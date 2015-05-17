@@ -19,8 +19,39 @@
           <p>Start by creating an issue</p>
         </div>
       {{/if}}
+      {{>CreateIssue}}
     </div>
   </div>
+</template>
+
+<template name="CreateIssue">
+  <p>Create new issue</p>
+
+  <form>
+    <div class="form-group">
+      <label class="sr-only" for="title">Title</label>
+      <input type="text" class="form-control" id="title" placeholder="Title">
+    </div>
+    <div class="form-group">
+      <!--TODO(vucalur): DRY violation: commenting & adding issue-->
+      <label class="sr-only" for="issueCommentBody">Comment Body</label>
+      <textarea class="form-control" rows="3" id="issueCommentBody" placeholder="Leave a comment"></textarea>
+    </div>
+    <!--TODO(vucalur): typeahead-->
+    <select class="form-group form-control">
+      <option value="default" disabled="disabled">Choose assignee</option>
+      {{#each collaborators}}
+        <option>{{login}}</option>
+      {{/each}}
+    </select>
+
+    <!--TODO(p4r4noj4):event handling not finished, createDisabled flag not working. -->
+    {{#if createDisabled}}
+      <button type="button" class="btn btn-success" id="createIssue" disabled="disabled">Submit new issue</button>
+    {{else}}
+      <button type="button" class="btn btn-success" id="createIssue">Submit new issue</button>
+    {{/if}}
+  </form>
 </template>
 
 <template name="IssueItem">
@@ -65,10 +96,11 @@
 <template name="AddComment">
   <form>
     <div class="form-group">
-      <label class="sr-only" for="commentBody">Comment Contents</label>
+      <label class="sr-only" for="commentBody">Leave a comment</label>
       <!--TODO(vucalur): markdown support-->
-      <textarea class="form-control" rows="3" id="commentBody" placeholder="Type here…"></textarea>
+      <textarea class="form-control" rows="3" id="commentBody" placeholder="Leave a comment"></textarea>
     </div>
-    <button type="button" class="btn btn-success" id="addComment">Add Comment</button>
+    <button type="button" class="btn btn-success" id="addComment">Comment</button>
   </form>
 </template>
+

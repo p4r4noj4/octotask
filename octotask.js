@@ -49,11 +49,9 @@ if (Meteor.isServer) {
       debug: false
    });
 
-   var wrappedGithubRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll']);
+   var wrappedRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll', 'getCollaborators']);
 
-   var wrappedIssues = Async.wrap(github.issues, ['repoIssues', 'getComments', 'createComment']);
-
-   // var wrappedMarkdown = Async.wrap(github.markdown, ['render'])
+   var wrappedIssues = Async.wrap(github.issues, ['create', 'repoIssues', 'getComments', 'createComment']);
 
    var authenticateUser = function () {
       github.authenticate({
@@ -69,13 +67,23 @@ if (Meteor.isServer) {
    Meteor.methods({
       'getRepositories': function getRepositories() {
          authenticateUser();
-         var repos = wrappedGithubRepos.getAll({user: getGitHubUsername(), type: "all", perPage: 100});
+         var repos = wrappedRepos.getAll({user: getGitHubUsername(), type: "all", perPage: 100});
          return repos;
       },
       'getRepoIssues': function getRepoIssues(reponame, username) {
          authenticateUser();
          var issues = wrappedIssues.repoIssues({user: username, repo: reponame, perPage: 100, state: "all"});
          return issues;
+      },
+      'getRepoCollaborators': function getRepoCollaborators(reponame, username) {
+         authenticateUser();
+         var collaborators = wrappedRepos.getCollaborators({user: username, repo: reponame, perPage: 100});
+         return collaborators;
+      },
+      'createIssue': function (reponame, username, title, body, assigneeLogin) {
+         authenticateUser();
+         var newIssue = wrappedIssues.create({user: username, repo: reponame, title: title, body: body, assignee: assigneeLogin, labels: []});
+         return newIssue;
       },
       'getIssueComments': function getIssueComments(reponame, username, issueNumber) {
          authenticateUser();
