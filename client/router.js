@@ -13,5 +13,3 @@ Router.route('/repositories', function () {
 Router.route('/repositories/:username/:reponame', function () {
    this.render('Repository', {data: this.params});
 });
-
-Router.route('/profile');

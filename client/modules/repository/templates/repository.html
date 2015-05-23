@@ -1,0 +1,50 @@
+<template name="Repository">
+  <div class="page-header">
+    <h1 class="col-md-offset-1"><a href="https://www.github.com/{{username}}/{{reponame}}">
+      {{reponame}}
+      <small>@{{username}}</small>
+    </a></h1>
+  </div>
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10">
+      {{>IssuesFilers}}
+      {{#if filteredIssues.length}}
+      <div class="list-group allIssues">
+        {{#each filteredIssues}}
+        {{> IssueItem}}
+        {{/each}}
+      </div>
+      {{else}}
+      <div class="jumbotron text-center">
+        <h2>No issues found!</h2>
+
+        <p>Create an issue or refine your search.</p>
+      </div>
+      {{/if}}
+      {{>CreateIssue}}
+    </div>
+  </div>
+</template>
+
+<template name="IssuesFilers">
+  <div class="panel panel-primary">
+    <div class="panel-heading">
+      <h3 class="panel-title">Filters</h3>
+    </div>
+    <form class="form-inline panel-body" id="filters">
+      <div class="form-group">
+        <label for="milestone">Milestone</label>
+        <!--TODO(vucalur): typeahead-->
+        <select class="form-control" id="milestone">
+          <option value="default">All</option>
+          {{#each milestones}}
+          <option>
+            <!--lame, but will be replaced with typeahead, which has custom templates -->
+            {{title}} (<p id="milestoneNumber">{{number}}</p>)
+          </option>
+          {{/each}}
+        </select>
+      </div>
+    </form>
+  </div>
+</template>

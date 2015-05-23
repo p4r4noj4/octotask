@@ -4,3 +4,7 @@ img.emoji {
     width: 20px;
     height: 20px;
 }
+
+ul.media-list {
+    padding-top: 10px;
+}

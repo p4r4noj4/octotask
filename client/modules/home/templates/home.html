@@ -7,9 +7,9 @@
         </div>
         <div class="list-group">
           {{#each repositories}}
-            {{> RepositoryItem}}
+          {{> RepositoryItem}}
           {{else}}
-            <a class="list-group-item disabled">No repositories loaded</a>
+          <a class="list-group-item disabled">No repositories loaded</a>
           {{/each}}
         </div>
       </div>
@@ -26,8 +26,4 @@
 
     <p class="list-group-item-text">{{description}}</p>
   </a>
-</template>
-
-<template name="profile">
-  <p>Your profile goes here</p>
 </template>
