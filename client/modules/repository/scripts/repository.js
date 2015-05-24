@@ -63,33 +63,32 @@ Template.IssuesFiler.events({
    'change #filter select': function (event, template) {
       var milestoneNumber = Template.instance().$('#milestone option:selected:not([default-marker]) #milestoneNumber').text();
       var assignee = Template.instance().$('#assignee option:selected:not([default-marker])').text();
+      var state = Template.instance().$('#state option:selected:not([default-marker])').text();
 
-      updateFilter(milestoneNumber, assignee);
+      updateFilter(milestoneNumber, assignee, state);
    }
 });
 
-function updateFilter(milestoneNumber, assignee) {
-   var newFilter = constructFilter(milestoneNumber, assignee);
+function updateFilter(milestoneNumber, assignee, state) {
+   var newFilter = constructFilter(milestoneNumber, assignee, state);
    Session.set('activeIssueFilter', newFilter);
 }
 
-function constructFilter(milestoneNumber, assignee) {
+function constructFilter(milestoneNumber, assignee, state) {
    var filter = {};
-   if (!allMilestonesSelected(milestoneNumber)) {
+   if (!allOptionsSelected(milestoneNumber)) {
       filter.milestone = {number: parseInt(milestoneNumber)};
    }
-   if (!allAssigneesSelected(assignee)) {
+   if (!allOptionsSelected(assignee)) {
       filter.assignee = {login: assignee};
+   }
+   if (!allOptionsSelected(state)) {
+      filter.state = state;
    }
    return filter;
 
-   function allMilestonesSelected(milestoneNumber) {
+   function allOptionsSelected(selectValue) {
       // implementation assumes proper jQuery selector and 'All' option to be the default one
-      return !milestoneNumber;
-   }
-
-   function allAssigneesSelected(assignee) {
-      // implementation assumes proper jQuery selector and 'All' option to be the default one
-      return !assignee;
+      return !selectValue;
    }
 }
