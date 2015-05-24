@@ -1,12 +1,19 @@
 Session.setDefault('allIssues', []);
 Session.setDefault('milestones', []);
-Session.setDefault('activeFilters', {});
+Session.setDefault('activeIssueFilter', {});
 
 Template.registerHelper('milestones', function () {
    Meteor.call('getRepoMilestones', Router.current().params.reponame, Router.current().params.username, function (error, result) {
       Session.set('milestones', result);
    });
    return Session.get('milestones');
+});
+
+Template.registerHelper('collaborators', function () {
+   Meteor.call('getRepoCollaborators', Router.current().params.reponame, Router.current().params.username, function (error, result) {
+      Session.set('collaborators', result);
+   });
+   return Session.get('collaborators') || [];
 });
 
 Template.Repository.onCreated(function () {
@@ -18,57 +25,71 @@ Template.Repository.onCreated(function () {
 Template.Repository.helpers({
    filteredIssues: function () {
       var allIssues = Session.get('allIssues');
-      var activeFilters = Session.get('activeFilters');
-      return filtered(allIssues, activeFilters);
+      var activeIssueFilter = Session.get('activeIssueFilter');
+      return filtered(allIssues, activeIssueFilter);
    }
 });
 
-
-function filtered(allIssues, activeFilters) {
-   var result = [];
-   allIssues.forEach(function (issue) {
-      var matches = true;
-      for (var prop in activeFilters) {
-         //TODO(vucalur): fix - not working for arbitrary number of property levels
-         if (!isSubset(activeFilters[prop], issue[prop])) {
-            matches = false;
-         }
-      }
-      if (matches) {
-         result.push(issue);
-      }
-   });
-   return result;
-}
-
-//TODO(vucalur): fix - won't work for arbitrary number of property levels
-function isSubset(subset, obj) {
-   for (var prop in subset) {
-      if (!obj || subset[prop] !== obj[prop]) {
-         return false;
-      }
+function filtered(issues, issueFilter) {
+   var predicate = function (issue) {
+      return isSubset(issue, issueFilter);
    }
-
-   return true;
+   return issues.filter(predicate);
 }
 
-Template.IssuesFilers.events({
-   'change #filters select': function (event, template) {
-      var milestoneSelect = Template.instance().$("#milestone");
-      var milestoneNumber = milestoneSelect.find(' option:selected #milestoneNumber').text();
+function isSubset(obj, subset) {
+   'use strict';
 
-      var updatedFilters = Session.get('activeFilters');
+   if (subset === null || subset === undefined) {
+      return true;
+   }
+   if (obj === null || obj === undefined) {
+      return false;
+   }
+   if (!(subset instanceof  Object)) {
+      return obj === subset || obj.valueOf() === subset.valueOf();
+   }
+   // recursive object inclusiveness
+   var p = Object.keys(obj);
+   return Object.keys(subset).every(function (i) {
+         return p.indexOf(i) !== -1;
+      }) &&
+      Object.keys(subset).every(function (i) {
+         return isSubset(obj[i], subset[i]);
+      });
+}
 
-      if (allMilestonesSelected(milestoneNumber)) {
-         delete updatedFilters.milestone;
-      } else {
-         updatedFilters.milestone = {number: parseInt(milestoneNumber)};
-      }
+Template.IssuesFiler.events({
+   'change #filter select': function (event, template) {
+      var milestoneNumber = Template.instance().$('#milestone option:selected:not([default-marker]) #milestoneNumber').text();
+      var assignee = Template.instance().$('#assignee option:selected:not([default-marker])').text();
 
-      function allMilestonesSelected(milestoneNumber) {
-         return !milestoneNumber;
-      }
-
-      Session.set('activeFilters', updatedFilters);
+      updateFilter(milestoneNumber, assignee);
    }
 });
+
+function updateFilter(milestoneNumber, assignee) {
+   var newFilter = constructFilter(milestoneNumber, assignee);
+   Session.set('activeIssueFilter', newFilter);
+}
+
+function constructFilter(milestoneNumber, assignee) {
+   var filter = {};
+   if (!allMilestonesSelected(milestoneNumber)) {
+      filter.milestone = {number: parseInt(milestoneNumber)};
+   }
+   if (!allAssigneesSelected(assignee)) {
+      filter.assignee = {login: assignee};
+   }
+   return filter;
+
+   function allMilestonesSelected(milestoneNumber) {
+      // implementation assumes proper jQuery selector and 'All' option to be the default one
+      return !milestoneNumber;
+   }
+
+   function allAssigneesSelected(assignee) {
+      // implementation assumes proper jQuery selector and 'All' option to be the default one
+      return !assignee;
+   }
+}

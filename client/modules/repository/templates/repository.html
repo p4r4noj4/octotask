@@ -7,41 +7,51 @@
   </div>
   <div class="row">
     <div class="col-md-offset-1 col-md-10">
-      {{>IssuesFilers}}
+      {{>IssuesFiler}}
       {{#if filteredIssues.length}}
-      <div class="list-group allIssues">
-        {{#each filteredIssues}}
-        {{> IssueItem}}
-        {{/each}}
-      </div>
+        <div class="list-group allIssues">
+          {{#each filteredIssues}}
+            {{> IssueItem}}
+          {{/each}}
+        </div>
       {{else}}
-      <div class="jumbotron text-center">
-        <h2>No issues found!</h2>
+        <div class="jumbotron text-center">
+          <h2>No issues found!</h2>
 
-        <p>Create an issue or refine your search.</p>
-      </div>
+          <p>Create an issue or refine your search.</p>
+        </div>
       {{/if}}
       {{>CreateIssue}}
     </div>
   </div>
 </template>
 
-<template name="IssuesFilers">
+<template name="IssuesFiler">
   <div class="panel panel-primary">
     <div class="panel-heading">
       <h3 class="panel-title">Filters</h3>
     </div>
-    <form class="form-inline panel-body" id="filters">
+    <form class="form-inline panel-body" id="filter">
       <div class="form-group">
         <label for="milestone">Milestone</label>
         <!--TODO(vucalur): typeahead-->
         <select class="form-control" id="milestone">
-          <option value="default">All</option>
+          <option value="default" default-marker>All</option>
           {{#each milestones}}
-          <option>
-            <!--lame, but will be replaced with typeahead, which has custom templates -->
-            {{title}} (<p id="milestoneNumber">{{number}}</p>)
-          </option>
+            <option>
+              <!--lame, but will be replaced with typeahead, which has custom templates -->
+              {{title}} (<p id="milestoneNumber">{{number}}</p>)
+            </option>
+          {{/each}}
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="assignee">Assignee</label>
+        <!--TODO(vucalur): typeahead-->
+        <select class="form-group form-control" id="assignee">
+          <option value="default" default-marker>All</option>
+          {{#each collaborators}}
+            <option>{{login}}</option>
           {{/each}}
         </select>
       </div>

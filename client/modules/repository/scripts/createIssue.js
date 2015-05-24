@@ -7,7 +7,7 @@ Template.CreateIssue.events({
       //TODO(vucalur): DRY
       var titleInput = Template.instance().$("#title");
       var bodyInput = Template.instance().$("#issueCommentBody");
-      var assigneeSelect = Template.instance().$("#assignee");
+      var assigneeSelect = Template.instance().$("#assignee2");
       var milestoneSelect = Template.instance().$("#milestone2");
 
       var title = titleInput.val();
@@ -32,14 +32,5 @@ Template.CreateIssue.events({
             assigneeSelect.prop('selectedIndex', 0);
             milestoneSelect.prop('selectedIndex', 0);
          });
-   }
-});
-
-Template.CreateIssue.helpers({
-   collaborators: function () {
-      Meteor.call('getRepoCollaborators', Router.current().params.reponame, Router.current().params.username, function (error, result) {
-         Session.set('collaborators', result);
-      });
-      return Session.get('collaborators') || [];
    }
 });

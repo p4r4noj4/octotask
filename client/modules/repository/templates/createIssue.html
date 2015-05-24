@@ -14,9 +14,10 @@
         <textarea class="form-control" rows="3" id="issueCommentBody" placeholder="Leave a comment"></textarea>
       </div>
       <div class="form-group">
-        <label for="assignee">Assignee</label>
+        <label for="assignee2">Assignee</label>
         <!--TODO(vucalur): typeahead-->
-        <select class="form-group form-control" id="assignee">
+        <!--TODO(vucalur): hideous workaround with assignee2-->
+        <select class="form-group form-control" id="assignee2">
           <option value="default"></option>
           {{#each collaborators}}
             <option>{{login}}</option>
