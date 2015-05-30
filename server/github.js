@@ -8,6 +8,9 @@ var wrappedRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll'
 
 var wrappedIssues = Async.wrap(github.issues, ['create', 'repoIssues', 'getComments', 'createComment', 'getAllMilestones']);
 
+
+LocalRepos = new Mongo.Collection("localRepos");
+
 var authenticateUser = function () {
    github.authenticate({
       type: "oauth",
@@ -19,14 +22,72 @@ var getGitHubUsername = function () {
    return Meteor.user().services.github.username;
 };
 
-function pruneEmpties(msg, keysToCheck) {
+function pruneEmpties(obj, keysToCheck) {
    keysToCheck.forEach(function (key) {
-      if (!msg[key]) {
-         delete msg[key];
+      if (!obj[key]) {
+         delete obj[key];
       }
    });
 }
 
+function localIssuesMap(username, reponame) {
+   var localIssues = LocalRepos.find({reponame: {$eq: reponame}, username: {$eq: username}});
+
+   var map = {};
+   localIssues.forEach(function (issue) {
+      map[issue.number] = issue;
+   });
+   return map;
+}
+
+function prepareIssues(username, reponame) {
+   var ghIssues = wrappedIssues.repoIssues({user: username, repo: reponame, perPage: 100, state: "all"});
+   var localIssuesByNumber = localIssuesMap(username, reponame);
+   addLocalProperties(ghIssues, localIssuesByNumber);
+   return ghIssues;
+
+   function addLocalProperties(ghIssues, localIssuesByNumber) {
+      ghIssues.forEach(function (ghIssue) {
+         var localIssue = localIssuesByNumber[ghIssue.number];
+         if (localIssue) {
+            ghIssue.priority = localIssue.priority;
+            ghIssue.cost = localIssue.cost;
+         }
+      });
+   }
+}
+
+function saveLocalData(reponame, username, number, cost, priority) {
+   var id = LocalRepos.insert({reponame: reponame, username: username, number: number, cost: cost, priority: priority});
+   var localIssue = LocalRepos.findOne({_id: {$eq: id}});
+   return localIssue;
+}
+
+
+function createIssue(username, reponame, title, body, cost, priority, assigneeLogin, milestoneNumber) {
+   var ghMsg = {
+      user: username,
+      repo: reponame,
+      title: title,
+      body: body,
+      assignee: assigneeLogin,
+      milestone: milestoneNumber,
+      labels: []
+   };
+   pruneEmpties(ghMsg, ['milestone']);
+   var newGhIssue = wrappedIssues.create(ghMsg);
+   var localData = saveLocalData(reponame, username, newGhIssue.number, cost, priority);
+   mergeProperties(localData, newGhIssue, ['cost', 'priority']);
+   return newGhIssue;
+
+   function mergeProperties(from, to, keysToMerge) {
+      keysToMerge.forEach(function (key) {
+         if (from[key]) {
+            to[key] = from[key];
+         }
+      });
+   }
+}
 Meteor.methods({
    'getRepositories': function getRepositories() {
       authenticateUser();
@@ -35,7 +96,7 @@ Meteor.methods({
    },
    'getRepoIssues': function getRepoIssues(reponame, username) {
       authenticateUser();
-      var issues = wrappedIssues.repoIssues({user: username, repo: reponame, perPage: 100, state: "all"});
+      var issues = prepareIssues(username, reponame);
       return issues;
    },
    'getRepoMilestones': function (reponame, username) {
@@ -48,19 +109,9 @@ Meteor.methods({
       var collaborators = wrappedRepos.getCollaborators({user: username, repo: reponame, perPage: 100});
       return collaborators;
    },
-   'createIssue': function (reponame, username, title, body, assigneeLogin, milestoneNumber) {
+   'createIssue': function (reponame, username, title, body, cost, priority, assigneeLogin, milestoneNumber) {
       authenticateUser();
-      var msg = {
-         user: username,
-         repo: reponame,
-         title: title,
-         body: body,
-         assignee: assigneeLogin,
-         milestone: milestoneNumber,
-         labels: []
-      };
-      pruneEmpties(msg, ['milestone']);
-      var newIssue = wrappedIssues.create(msg);
+      var newIssue = createIssue(username, reponame, title, body, cost, priority, assigneeLogin, milestoneNumber);
       return newIssue;
    },
    'getIssueComments': function getIssueComments(reponame, username, issueNumber) {

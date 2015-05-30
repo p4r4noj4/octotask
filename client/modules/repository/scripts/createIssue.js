@@ -7,11 +7,15 @@ Template.CreateIssue.events({
       //TODO(vucalur): DRY
       var titleInput = Template.instance().$("#title");
       var bodyInput = Template.instance().$("#issueCommentBody");
+      var costInput = Template.instance().$("#cost");
+      var priorityInput = Template.instance().$("#priority");
       var assigneeSelect = Template.instance().$("#assignee2");
       var milestoneSelect = Template.instance().$("#milestone2");
 
       var title = titleInput.val();
       var body = bodyInput.val();
+      var cost = parseInt(costInput.val());
+      var priority = parseInt(priorityInput.val());
       var assignee = assigneeSelect.val();
       var milestoneNumber = milestoneSelect.find(' option:selected #milestoneNumber').text();
 
@@ -20,6 +24,8 @@ Template.CreateIssue.events({
          Router.current().params.username,
          title,
          body,
+         cost,
+         priority,
          assignee,
          milestoneNumber,
          function (error, newIssue) {
@@ -29,6 +35,8 @@ Template.CreateIssue.events({
 
             titleInput.val('');
             bodyInput.val('');
+            costInput.val('');
+            priorityInput.val('');
             assigneeSelect.prop('selectedIndex', 0);
             milestoneSelect.prop('selectedIndex', 0);
          });

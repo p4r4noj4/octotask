@@ -31,8 +31,8 @@
     <div class="panel-heading">
       <h3 class="panel-title">Filters</h3>
     </div>
-    <form class="form-inline panel-body" id="filter">
-      <div class="form-group">
+    <form class="form-inline row panel-body" id="filter">
+      <div class="form-group col-md-3 coll-md-offset-1">
         <label for="milestone">Milestone</label>
         <!--TODO(vucalur): typeahead-->
         <select class="form-control" id="milestone">
@@ -45,7 +45,7 @@
           {{/each}}
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group col-md-3 coll-md-offset-1">
         <label for="assignee">Assignee</label>
         <!--TODO(vucalur): typeahead-->
         <select class="form-group form-control" id="assignee">
@@ -55,7 +55,7 @@
           {{/each}}
         </select>
       </div>
-      <div class="form-group">
+      <div class="form-group col-md-3 coll-md-offset-1">
         <label for="state">State</label>
         <select class="form-group form-control" id="state">
           <option value="default" default-marker>All</option>
