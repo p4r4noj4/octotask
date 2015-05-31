@@ -6,6 +6,26 @@ Template.IssueItem.events({
    'click #showComments': function () {
       $("#" + Template.instance().commentsId.get()).collapse('toggle');
    },
+   'click #closeIssue': function () {
+      Meteor.call('closeIssue',
+         Router.current().params.reponame,
+         Router.current().params.username,
+         getIssueId(Template),
+         function (error, closedIssue) {
+            var allIssues = Session.get('allIssues');
+            updateAllIssues(closedIssue);
+            Session.set('allIssues', allIssues);
+
+            function updateAllIssues(closedIssue) {
+               for (var i = 0, l = allIssues.length; i < l; i++) {
+                  if (allIssues[i].number === closedIssue.number) {
+                     allIssues[i] = closedIssue;
+                     break;
+                  }
+               }
+            }
+         });
+   },
    'click #addComment': function (event, template) {
       var bodyInput = $("#" + Template.instance().commentsId.get() + " #commentBody");
       var body = bodyInput.val();
@@ -47,5 +67,8 @@ Template.IssueItem.helpers({
    },
    comments: function () {
       return Template.instance().comments.get();
+   },
+   isOpen: function (state) {
+      return state === 'open';
    }
 })

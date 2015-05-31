@@ -4,9 +4,21 @@ var github = new GitHubAPI({
    debug: true
 });
 
-var wrappedRepos = Async.wrap(github.repos, ['getFromUser', 'getHooks', 'getAll', 'getCollaborators']);
+var wrappedRepos = Async.wrap(github.repos, [
+   'getAll',
+   'getCollaborators',
+   'getFromUser',
+   'getHooks'
+]);
 
-var wrappedIssues = Async.wrap(github.issues, ['create', 'repoIssues', 'getComments', 'createComment', 'getAllMilestones']);
+var wrappedIssues = Async.wrap(github.issues, [
+   'create',
+   'createComment',
+   'edit',
+   'getAllMilestones',
+   'getComments',
+   'repoIssues'
+]);
 
 
 LocalRepos = new Mongo.Collection("localRepos");
@@ -118,6 +130,11 @@ Meteor.methods({
       authenticateUser();
       var comments = wrappedIssues.getComments({user: username, repo: reponame, number: issueNumber, perPage: 100});
       return comments;
+   },
+   'closeIssue': function(reponame, username, issueNumber) {
+      authenticateUser();
+      var closedIssue = wrappedIssues.edit({user: username, repo: reponame, number: issueNumber, state: 'closed'});
+      return closedIssue;
    },
    'createComment': function createComment(reponame, username, issueNumber, body) {
       authenticateUser();
