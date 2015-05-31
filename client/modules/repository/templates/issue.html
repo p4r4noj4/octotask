@@ -1,6 +1,26 @@
 <template name="IssueItem">
   <div class="list-group-item">
-    <h4 class="list-group-item-heading">{{title}}{{#unless isOpen state}} <span class="badge">closed</span>{{/unless}} {{#if priority}}<span class="label label-warning">Priority: <span class="badge alert-danger">{{priority}}</span></span> {{/if}}{{#if cost}}<span class="label label-warning">Cost: <span class="badge alert-danger">{{cost}}</span></span> {{/if}}{{#if assignee}}<span class="label label-warning">Assignee: <span class="badge alert-danger">{{assignee.login}}</span></span>{{/if}}</h4>
+    <div class="row">
+      <h4 class="list-group-item-heading col-md-6">
+        {{title}}
+        {{#unless isOpen state}}
+          <span class="badge" style="vertical-align: middle;">closed</span>
+        {{/unless}}
+      </h4>
+      <h5 class="list-group-item-heading col-md-6">
+        <div class="pull-right">
+          {{#if priority}}
+            Priority <span class="badge alert-success" style="vertical-align: middle;">{{priority}}</span>
+          {{/if}}
+          {{#if cost}}
+            Cost <span class="badge alert-warning" style="vertical-align: middle;">{{cost}}</span>
+          {{/if}}
+          {{#if assignee}}
+            <img class="img-circle" style="max-height:30px" src="{{assignee.avatar_url}}" title="Assigned to {{assignee.login}}" alt="Assigned to {{assignee.login}}">
+          {{/if}}
+        </div>
+      </h5>
+    </div>
 
     <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{body}}{{/emoji}}{{/markdown}}</p>
 
