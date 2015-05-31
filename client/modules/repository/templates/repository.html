@@ -1,10 +1,7 @@
 <template name="Repository">
-  <div class="page-header">
-    <h1 class="col-md-offset-1"><a href="https://www.github.com/{{username}}/{{reponame}}">
-      {{reponame}}
-      <small>@{{username}}</small>
-    </a></h1>
-  </div>
+  {{>RepositoryHeader}}
+  <h5 class="col-md-offset-1"><a href="/repositories/{{username}}/{{reponame}}/progress">Track progress</a></h5>
+
   <div class="row">
     <div class="col-md-offset-1 col-md-10">
       {{>IssuesFiler}}
@@ -24,6 +21,13 @@
       {{>CreateIssue}}
     </div>
   </div>
+</template>
+
+<template name="RepositoryHeader">
+  <h1 class="col-md-offset-1"><a href="https://www.github.com/{{username}}/{{reponame}}">
+    {{reponame}}
+    <small>@{{username}}</small>
+  </a></h1>
 </template>
 
 <template name="IssuesFiler">

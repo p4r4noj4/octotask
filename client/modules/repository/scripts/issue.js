@@ -67,8 +67,5 @@ Template.IssueItem.helpers({
    },
    comments: function () {
       return Template.instance().comments.get();
-   },
-   isOpen: function (state) {
-      return state === 'open';
    }
 })

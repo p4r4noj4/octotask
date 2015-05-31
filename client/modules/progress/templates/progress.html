@@ -1,0 +1,32 @@
+<template name="Progress">
+  {{>RepositoryHeader}}
+  <h5 class="col-md-offset-1">
+    <a href="/repositories/{{username}}/{{reponame}}">See issues</a>
+  </h5>
+
+  <div class="row">
+    <div class="col-md-offset-1 col-md-10">
+      {{#if milestones.length}}
+        <div class="list-group">
+          {{#each milestones}}
+            {{> MilestoneItem}}
+          {{/each}}
+        </div>
+      {{else}}
+        <div class="jumbotron text-center">
+          <h2>No milestones yet!</h2>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</template>
+
+<template name="MilestoneItem">
+  <div class="list-group-item">
+    <h4 class="list-group-item-heading">{{title}}{{#unless isOpen state}} <span class="badge">closed</span>{{/unless}} <span class="label label-warning">Creator: <span class="badge alert-danger">{{creator.login}}</span></span></h4>
+
+    <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{description}}{{/emoji}}{{/markdown}}</p>
+
+    <button type="button" class="btn btn-info" id="showProgress">Show progress</button>
+  </div>
+</template>

@@ -16,6 +16,10 @@ Template.registerHelper('collaborators', function () {
    return Session.get('collaborators') || [];
 });
 
+Template.registerHelper('isOpen', function (state) {
+   return state === 'open';
+});
+
 Template.Repository.onCreated(function () {
    Meteor.call('getRepoIssues', Router.current().params.reponame, Router.current().params.username, function (error, result) {
       Session.set('allIssues', result);
