@@ -1,4 +1,4 @@
-function getIssueId(issueTemplate) {
+function getIssueNumber(issueTemplate) {
    return issueTemplate.currentData().number;
 }
 
@@ -19,7 +19,7 @@ Template.IssueItem.events({
       Meteor.call('closeIssue',
          Router.current().params.reponame,
          Router.current().params.username,
-         getIssueId(Template),
+         getIssueNumber(Template),
          function (error, closedIssue) {
             var allIssues = Session.get('allIssues');
             updateIssues(closedIssue, allIssues);
@@ -28,13 +28,13 @@ Template.IssueItem.events({
 
          });
    },
-   'click #editIssue': function() {
+   'click #editIssue': function () {
       Template.instance().inEdition.set(true);
    },
-   'click #cancelEdit': function() {
+   'click #cancelEdit': function () {
       Template.instance().inEdition.set(false);
    },
-   'click #saveEdit': function() {
+   'click #saveEdit': function () {
       Template.instance().inEdition.set(false);
       var costInput = Template.instance().$("#cost");
       var priorityInput = Template.instance().$("#priority");
@@ -68,7 +68,7 @@ Template.IssueItem.events({
       Meteor.call('createComment',
          Router.current().params.reponame,
          Router.current().params.username,
-         getIssueId(Template),
+         getIssueNumber(Template),
          body,
          function (error, newComment) {
             var updatedComments = commentsReactiveVar.get();
@@ -79,7 +79,7 @@ Template.IssueItem.events({
    },
    'show.bs.collapse': function () {
       var commentsReactiveVar = Template.instance().comments;
-      Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, getIssueId(Template), function (error, result) {
+      Meteor.call('getIssueComments', Router.current().params.reponame, Router.current().params.username, getIssueNumber(Template), function (error, result) {
          commentsReactiveVar.set(result);
       });
    }
@@ -103,7 +103,7 @@ Template.IssueItem.helpers({
    comments: function () {
       return Template.instance().comments.get();
    },
-   inEdition: function() {
+   inEdition: function () {
       return Template.instance().inEdition.get();
    }
 });

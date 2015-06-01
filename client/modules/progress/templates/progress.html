@@ -23,7 +23,19 @@
 
 <template name="MilestoneItem">
   <div class="list-group-item">
-    <h4 class="list-group-item-heading">{{title}}{{#unless isOpen state}} <span class="badge">closed</span>{{/unless}} <span class="label label-warning">Creator: <span class="badge alert-danger">{{creator.login}}</span></span></h4>
+    <div class="row">
+      <h4 class="list-group-item-heading col-md-6">
+        {{title}}
+        {{#unless isOpen state}}
+          <span class="badge" style="vertical-align: middle;">closed</span>
+        {{/unless}}
+      </h4>
+      <h5 class="list-group-item-heading col-md-6">
+        <div class="pull-right">
+          <img class="img-circle" style="max-height:30px" src="{{creator.avatar_url}}" title="Created by {{creator.login}}" alt="Created by {{creator.login}}">
+        </div>
+      </h5>
+    </div>
 
     <p class="list-group-item-text">{{#markdown}}{{#emoji}}{{description}}{{/emoji}}{{/markdown}}</p>
 
