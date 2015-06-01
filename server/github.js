@@ -43,7 +43,7 @@ function pruneEmpties(obj, keysToCheck) {
 }
 
 function localIssuesMap(username, reponame) {
-   var localIssues = LocalRepos.find({reponame: {$eq: reponame}, username: {$eq: username}});
+   var localIssues = LocalRepos.find({reponame: reponame, username: username});
 
    var map = {};
    localIssues.forEach(function (issue) {
