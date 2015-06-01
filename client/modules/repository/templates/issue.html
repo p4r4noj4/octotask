@@ -1,24 +1,41 @@
 <template name="IssueItem">
   <div class="list-group-item">
     <div class="row">
-      <h4 class="list-group-item-heading col-md-6">
+      <h4 class="list-group-item-heading col-lg-6">
         {{title}}
         {{#unless isOpen state}}
           <span class="badge" style="vertical-align: middle;">closed</span>
         {{/unless}}
       </h4>
-      <h5 class="list-group-item-heading col-md-6">
-        <div class="pull-right">
-          {{#if priority}}
-            Priority <span class="badge alert-success" style="vertical-align: middle;">{{priority}}</span>
-          {{/if}}
-          {{#if cost}}
-            Cost <span class="badge alert-warning" style="vertical-align: middle;">{{cost}}</span>
-          {{/if}}
-          {{#if assignee}}
-            <img class="img-circle" style="max-height:30px" src="{{assignee.avatar_url}}" title="Assigned to {{assignee.login}}" alt="Assigned to {{assignee.login}}">
-          {{/if}}
+      <h5 class="list-group-item-heading col-lg-6">
+        <div class="col-md-11">
+          <div class="pull-right">
+            {{#if inEdition}}
+              <form class="form-inline">
+                <div class="form-group">
+                  <label for="cost">Cost</label>
+                  <input type="number" class="form-control" id="cost" min="1" max="12" value="{{cost}}">
+                </div>
+                <div class="form-group">
+                  <label for="priority">Priority</label>
+                  <input type="number" class="form-control" id="priority" min="1" max="5" value="{{priority}}">
+                </div>
+              </form>
+            {{else}}
+              <div style="margin-top:6px;">
+                Cost <span class="badge {{#if cost}}alert-warning{{else}}alert-danger{{/if}}" style="vertical-align: middle;">{{#if cost}}{{cost}}{{else}}none{{/if}}</span>
+                Priority <span class="badge {{#if priority}}alert-success{{else}}alert-danger{{/if}}" style="vertical-align: middle;">{{#if priority}}{{priority}}{{else}}none{{/if}}</span>
+              </div>
+            {{/if}}
+          </div>
         </div>
+        <!--<div class="col-md-1">-->
+          <div class="pull-right">
+            {{#if assignee}}
+              <img class="img-circle" style="max-height:30px" src="{{assignee.avatar_url}}" title="Assigned to {{assignee.login}}" alt="Assigned to {{assignee.login}}">
+            {{/if}}
+          </div>
+        <!--</div>-->
       </h5>
     </div>
 
@@ -27,6 +44,14 @@
     <button type="button" class="btn btn-info" id="showComments">Show comments</button>
     {{#if isOpen state}}
       <button type="button" class="btn btn-default" id="closeIssue">Close issue</button>
+    {{/if}}
+    {{#if inEdition}}
+      <div class="pull-right">
+        <button type="button" class="btn btn-default" id="cancelEdit">Cancel</button>
+        <button type="button" class="btn btn-default" id="saveEdit">Save</button>
+      </div>
+    {{else}}
+      <button type="button" class="btn btn-default pull-right" id="editIssue">Edit</button>
     {{/if}}
 
     <div class="row">

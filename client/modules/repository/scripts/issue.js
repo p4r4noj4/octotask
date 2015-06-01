@@ -2,6 +2,15 @@ function getIssueId(issueTemplate) {
    return issueTemplate.currentData().number;
 }
 
+function updateIssues(updatedIssue, allIssues) {
+   for (var i = 0, l = allIssues.length; i < l; i++) {
+      if (allIssues[i].number === updatedIssue.number) {
+         allIssues[i] = updatedIssue;
+         break;
+      }
+   }
+}
+
 Template.IssueItem.events({
    'click #showComments': function () {
       $("#" + Template.instance().commentsId.get()).collapse('toggle');
@@ -13,18 +22,43 @@ Template.IssueItem.events({
          getIssueId(Template),
          function (error, closedIssue) {
             var allIssues = Session.get('allIssues');
-            updateAllIssues(closedIssue);
+            updateIssues(closedIssue, allIssues);
             Session.set('allIssues', allIssues);
 
-            function updateAllIssues(closedIssue) {
-               for (var i = 0, l = allIssues.length; i < l; i++) {
-                  if (allIssues[i].number === closedIssue.number) {
-                     allIssues[i] = closedIssue;
-                     break;
-                  }
+
+         });
+   },
+   'click #editIssue': function() {
+      Template.instance().inEdition.set(true);
+   },
+   'click #cancelEdit': function() {
+      Template.instance().inEdition.set(false);
+   },
+   'click #saveEdit': function() {
+      Template.instance().inEdition.set(false);
+      var costInput = Template.instance().$("#cost");
+      var priorityInput = Template.instance().$("#priority");
+      var cost = parseInt(costInput.val());
+      var priority = parseInt(priorityInput.val());
+
+      Meteor.call('updateIssue',
+         Router.current().params.reponame,
+         Router.current().params.username,
+         this.number,
+         cost,
+         priority,
+         function (error, updatedIssue) {
+            var allIssues = Session.get('allIssues');
+            for (var i = 0, l = allIssues.length; i < l; i++) {
+               if (allIssues[i].number === updatedIssue.number) {
+                  allIssues[i].cost = updatedIssue.cost;
+                  allIssues[i].priority = updatedIssue.priority;
+                  break;
                }
             }
+            Session.set('allIssues', allIssues);
          });
+
    },
    'click #addComment': function (event, template) {
       var bodyInput = $("#" + Template.instance().commentsId.get() + " #commentBody");
@@ -58,6 +92,7 @@ Template.IssueItem.onCreated(function () {
    this.commentsId = new ReactiveVar(commentsId);
 
    this.comments = new ReactiveVar([]);
+   this.inEdition = new ReactiveVar(false);
    $("#" + this.commentsId.get()).collapse({parent: ".allIssues"});
 });
 
@@ -67,5 +102,8 @@ Template.IssueItem.helpers({
    },
    comments: function () {
       return Template.instance().comments.get();
+   },
+   inEdition: function() {
+      return Template.instance().inEdition.get();
    }
-})
+});
