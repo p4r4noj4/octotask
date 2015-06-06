@@ -71,7 +71,7 @@ function prepareIssues(username, reponame) {
 
 function saveLocalData(reponame, username, number, cost, priority) {
    var id = LocalRepos.insert({reponame: reponame, username: username, number: number, cost: cost, priority: priority});
-   var localIssue = LocalRepos.findOne({_id: {$eq: id}});
+   var localIssue = LocalRepos.findOne({_id: id});
    return localIssue;
 }
 
@@ -82,10 +82,12 @@ function createIssue(username, reponame, title, body, cost, priority, assigneeLo
       repo: reponame,
       title: title,
       body: body,
-      assignee: assigneeLogin,
       milestone: milestoneNumber,
       labels: []
    };
+   if(assigneeLogin) {
+      ghMsg.assignee = assigneeLogin;
+   }
    pruneEmpties(ghMsg, ['milestone']);
    var newGhIssue = wrappedIssues.create(ghMsg);
    var localData = saveLocalData(reponame, username, newGhIssue.number, cost, priority);
