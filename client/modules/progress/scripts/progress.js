@@ -11,41 +11,22 @@ Template.MilestoneItem.events({
          alert('This milestone has no "due on" date!');
          return;
       }
-      var ret = calculateCostDecreaseByDay(milestoneData);
-      if (!ret.allCostSet) {
+      var milestoneIssues = getMilestoneIssues(milestoneData);
+      if (!costSetForAll(milestoneIssues)) {
          alert('Some milestone issues don\'t have cost estimates');
          return;
       }
-      var totalMilestoneCost = ret.totalMilestoneCost;
-      var costDecreaseByDay = ret.costDecreaseByDay;
+      var ret1 = calculateCostDecreaseByDay(milestoneIssues, milestoneData);
+      var totalMilestoneCost = ret1.totalMilestoneCost;
+      var costDecreaseByDay = ret1.costDecreaseByDay;
 
-      var __ret = calculateChartData(costDecreaseByDay, totalMilestoneCost);
-      var idealBurn = __ret.idealBurn;
-      var actualBurn = __ret.actualBurn;
-      var consecutiveMilestoneDaysReadable = makeReadable(__ret.consecutiveMilestoneDays);
+      var ret2 = calculateChartData(costDecreaseByDay, totalMilestoneCost);
+      var idealBurn = ret2.idealBurn;
+      var actualBurn = ret2.actualBurn;
+      var consecutiveMilestoneDaysReadable = makeReadable(ret2.consecutiveMilestoneDays);
       drawChart(consecutiveMilestoneDaysReadable, idealBurn, actualBurn, milestoneData.title);
    }
 });
-
-function calculateCostDecreaseByDay(milestoneData) {
-   var totalMilestoneCost = 0;
-   var milestoneIssues = getMilestoneIssues(milestoneData);
-   var costDecreaseByDay = initMilestoneSpan(milestoneIssues, milestoneData);
-   var allCostSet = true;
-   milestoneIssues.forEach(function (issue) {
-      if (allCostSet) {
-         var cost = issue.cost;
-         if (!cost) {
-            allCostSet = false;
-         }
-         totalMilestoneCost += cost;
-         if (issue.state === 'closed') {
-            costDecreaseByDay[extractDate(issue.closed_at)] += cost;
-         }
-      }
-   });
-   return {allCostSet: allCostSet, totalMilestoneCost: totalMilestoneCost, costDecreaseByDay: costDecreaseByDay};
-}
 
 function getMilestoneIssues(milestoneData) {
    var allIssues = Session.get('allIssues');
@@ -55,6 +36,29 @@ function getMilestoneIssues(milestoneData) {
       }
    });
    return milestoneIssues;
+}
+
+function costSetForAll(issues) {
+   for (var i = 0, l = issues.length; i < l; i++) {
+      var cost = issues[i].cost;
+      if (!cost) {
+         return false;
+      }
+   }
+   return true;
+}
+
+function calculateCostDecreaseByDay(milestoneIssues, milestoneData) {
+   var totalMilestoneCost = 0;
+   var costDecreaseByDay = initMilestoneSpan(milestoneIssues, milestoneData);
+   milestoneIssues.forEach(function (issue) {
+      var cost = issue.cost;
+      totalMilestoneCost += cost;
+      if (issue.state === 'closed') {
+         costDecreaseByDay[extractDate(issue.closed_at)] += cost;
+      }
+   });
+   return {totalMilestoneCost: totalMilestoneCost, costDecreaseByDay: costDecreaseByDay};
 }
 
 function initMilestoneSpan(milestoneIssues, milestoneData) {
@@ -68,7 +72,6 @@ function initMilestoneSpan(milestoneIssues, milestoneData) {
       result[date] = 0;
    }
    return result;
-
 }
 
 function oldestCreationDate(issues) {
