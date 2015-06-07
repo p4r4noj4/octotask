@@ -11,8 +11,7 @@ Template.MilestoneItem.events({
          alert('This milestone has no "due on" date!');
          return;
       }
-      var allIssues = Session.get('allIssues');
-      var ret = calculateCostDecreaseByDay(allIssues, milestoneData);
+      var ret = calculateCostDecreaseByDay(milestoneData);
       if (!ret.allCostSet) {
          alert('Some milestone issues don\'t have cost estimates');
          return;
@@ -28,39 +27,63 @@ Template.MilestoneItem.events({
    }
 });
 
-function calculateCostDecreaseByDay(allIssues, milestoneData) {
+function calculateCostDecreaseByDay(milestoneData) {
    var totalMilestoneCost = 0;
-   var costDecreaseByDay = initMilestoneSpan(milestoneData);
+   var milestoneIssues = getMilestoneIssues(milestoneData);
+   var costDecreaseByDay = initMilestoneSpan(milestoneIssues, milestoneData);
    var allCostSet = true;
-   allIssues.forEach(function (issue) {
+   milestoneIssues.forEach(function (issue) {
       if (allCostSet) {
-         if (issue.milestone && issue.milestone.number === milestoneData.number) {
-            var cost = issue.cost;
-            if (!cost) {
-               allCostSet = false;
-            }
-            totalMilestoneCost += cost;
-            if (issue.state === 'closed') {
-               costDecreaseByDay[extractDate(issue.closed_at)] += cost;
-            }
+         var cost = issue.cost;
+         if (!cost) {
+            allCostSet = false;
+         }
+         totalMilestoneCost += cost;
+         if (issue.state === 'closed') {
+            costDecreaseByDay[extractDate(issue.closed_at)] += cost;
          }
       }
    });
    return {allCostSet: allCostSet, totalMilestoneCost: totalMilestoneCost, costDecreaseByDay: costDecreaseByDay};
 }
 
-function initMilestoneSpan(milestoneData) {
-   var start = new Date(milestoneData.created_at);
-   var end = new Date(milestoneData.due_on);
-   removeTime(start);
-   removeTime(end);
+function getMilestoneIssues(milestoneData) {
+   var allIssues = Session.get('allIssues');
+   var milestoneIssues = allIssues.filter(function (issue) {
+      if (issue.milestone && issue.milestone.number === milestoneData.number) {
+         return true;
+      }
+   });
+   return milestoneIssues;
+}
+
+function initMilestoneSpan(milestoneIssues, milestoneData) {
+   var milestoneStart = oldestCreationDate(milestoneIssues);
+   var milestoneEnd = new Date(milestoneData.due_on);
+   removeTime(milestoneStart);
+   removeTime(milestoneEnd);
 
    var result = {};
-   for (var date = start; date <= end; incByOneDay(date)) {
+   for (var date = milestoneStart; date <= milestoneEnd; incByOneDay(date)) {
       result[date] = 0;
    }
    return result;
 
+}
+
+function oldestCreationDate(issues) {
+   var oldestDate = now();
+   issues.forEach(function (issue) {
+      var date = new Date(issue.created_at);
+      if (date < oldestDate) {
+         oldestDate = date;
+      }
+   });
+   return oldestDate;
+}
+
+function now() {
+   return new Date();
 }
 
 function removeTime(date) {
