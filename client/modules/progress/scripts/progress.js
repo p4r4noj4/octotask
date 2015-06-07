@@ -110,11 +110,16 @@ function calculateChartData(costDecreaseByDay, totalMilestoneCost) {
    var actualBurn = new Array(l);
    var idealDailyBurn = totalMilestoneCost / l;
    for (var i = 0; i < l; i++) {
-      idealBurn[i] = (i == 0 ? totalMilestoneCost : idealBurn[i - 1]) - idealDailyBurn;
+      var ideal = (i == 0 ? totalMilestoneCost : idealBurn[i - 1]) - idealDailyBurn;
+      idealBurn[i] = round(ideal);
       actualBurn[i] = (i == 0 ? totalMilestoneCost : actualBurn[i - 1])
          - costDecreaseByDay[consecutiveMilestoneDays[i]];
    }
    return {consecutiveMilestoneDays: consecutiveMilestoneDays, idealBurn: idealBurn, actualBurn: actualBurn};
+}
+
+function round(number) {
+   return Math.round(number * 100) / 100;
 }
 
 function makeReadable(consecutiveMilestoneDays) {
