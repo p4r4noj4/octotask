@@ -3,3 +3,5 @@ Accounts.ui.config({
       github: ['user', 'repo', 'read:repo_hook']
    }
 });
+
+Meteor.subscribe("userData");
