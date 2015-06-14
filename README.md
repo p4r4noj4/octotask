@@ -1,3 +1,18 @@
+# Structure
+Two main directories are client and server. The client folder consists of:
+
+* __css__ directory for layout
+* __router.js__ file with routing definitions
+* __octotask.js__ and __octotask.html__ being the backbone of the rest of front-end
+* __modules__ directory containing javascript and html files for all parts of
+web
+
+The .meteor directory is necessary, as it contains the needed definitions 
+for meteor packages and database set-up.
+
+The packages folder is used to provide the npm container, so that 
+the system can use Node.js modules (defined in packages.json).
+
 # Contributing 
 
 ## Indentation
